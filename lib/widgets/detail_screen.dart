@@ -203,12 +203,12 @@ class DetailScreen extends StatelessWidget {
                                       breed.affectionLevel, 'Affection level',
                                       color: Colors.red),
                                 if (breed.childFriendly != null)
-                                  _buildRatingBar(breed.childFriendly,
-                                      'Child friendly',
+                                  _buildRatingBar(
+                                      breed.childFriendly, 'Child friendly',
                                       color: Colors.orange),
                                 if (breed.dogFriendly != null)
-                                  _buildRatingBar(breed.dogFriendly,
-                                      'Dog friendly',
+                                  _buildRatingBar(
+                                      breed.dogFriendly, 'Dog friendly',
                                       color: Colors.brown),
                                 if (breed.energyLevel != null)
                                   _buildRatingBar(
@@ -218,19 +218,20 @@ class DetailScreen extends StatelessWidget {
                                   _buildRatingBar(breed.grooming, 'Grooming',
                                       color: Colors.purple),
                                 if (breed.healthIssues != null)
-                                  _buildRatingBar(breed.healthIssues,
-                                      'Health issues',
+                                  _buildRatingBar(
+                                      breed.healthIssues, 'Health issues',
                                       color: Colors.red),
                                 if (breed.intelligence != null)
                                   _buildRatingBar(
                                       breed.intelligence, 'Intelligence',
                                       color: Colors.indigo),
                                 if (breed.sheddingLevel != null)
-                                  _buildRatingBar(breed.sheddingLevel, 'Shedding level',
+                                  _buildRatingBar(
+                                      breed.sheddingLevel, 'Shedding level',
                                       color: Colors.brown),
                                 if (breed.socialNeeds != null)
-                                  _buildRatingBar(breed.socialNeeds,
-                                      'Social needs',
+                                  _buildRatingBar(
+                                      breed.socialNeeds, 'Social needs',
                                       color: Colors.teal),
                                 if (breed.strangerFriendly != null)
                                   _buildRatingBar(breed.strangerFriendly,
