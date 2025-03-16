@@ -20,9 +20,11 @@ Catinder - приложение с концепцией Tinder, где вмес�
 
 
 ## 📱 Скриншоты
-![alt text](images/image.png)
-![alt text](images/image2.png)
-![alt text](images/image1.png)
+<p>
+  <img src="images/image.png" alt="Скриншот главного экрана" width="30%" style="display:inline-block; margin-right:10px;" />
+  <img src="images/image1.png" alt="Скриншот детального экрана" width="30%" style="display:inline-block; margin-right:10px;" />
+  <img src="images/image2.png" alt="Скриншот детального экрана, характеристики" width="30%" style="display:inline-block;" />
+</p>
 
 # Скачивание APK
 [Ссылка на скачивание APK (Гугл Диск)](https://drive.google.com/file/d/109AT5xz7T5Io-vp9ywId26G1m3kLeQ5b/view?usp=sharing)
