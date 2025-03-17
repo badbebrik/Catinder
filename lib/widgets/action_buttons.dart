@@ -1,5 +1,36 @@
 import 'package:flutter/material.dart';
 
+enum ActionButtonType {
+  like,
+  dislike,
+}
+
+class ActionButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final ActionButtonType type;
+
+  const ActionButton({
+    super.key,
+    required this.onPressed,
+    required this.type,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      heroTag: type.name,
+      onPressed: onPressed,
+      backgroundColor:
+          type == ActionButtonType.like ? Colors.green : Colors.red,
+      child: Icon(
+        type == ActionButtonType.like ? Icons.favorite : Icons.close,
+        color: Colors.white,
+        size: 32,
+      ),
+    );
+  }
+}
+
 class ActionButtons extends StatelessWidget {
   final VoidCallback onLike;
   final VoidCallback onDislike;
@@ -15,17 +46,13 @@ class ActionButtons extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        FloatingActionButton(
-          heroTag: 'dislike',
+        ActionButton(
+          type: ActionButtonType.dislike,
           onPressed: onDislike,
-          backgroundColor: Colors.red,
-          child: const Icon(Icons.close, color: Colors.white, size: 32),
         ),
-        FloatingActionButton(
-          heroTag: 'like',
+        ActionButton(
+          type: ActionButtonType.like,
           onPressed: onLike,
-          backgroundColor: Colors.green,
-          child: const Icon(Icons.favorite, color: Colors.white, size: 32),
         ),
       ],
     );
