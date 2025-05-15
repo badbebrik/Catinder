@@ -1,7 +1,7 @@
 import 'dart:async';
 import '../../domain/entities/liked_cat.dart';
 
-class LocalLikedCatDataSource {
+class LocalLikedCatDatasource {
   final _controller = StreamController<List<LikedCat>>.broadcast();
   final _storage = <LikedCat>[];
 
