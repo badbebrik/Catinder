@@ -1,10 +1,10 @@
-import '../../data/services/cat_api_service.dart';
-import '../entities/cat.dart';
+import '../services/cat_api_service.dart';
+import '../../domain/entities/cat.dart';
 
-class CatRepository {
+class CatRepositoryImpl {
   final CatApiService apiService;
 
-  CatRepository({required this.apiService});
+  CatRepositoryImpl({required this.apiService});
 
   Future<Cat?> getRandomCat() async {
     final catDTO = await apiService.fetchRandomCat();

@@ -1,4 +1,4 @@
-import 'package:catinder/domain/repositories/cat_repository_impl.dart';
+import 'package:catinder/data/repositories/cat_repository_impl.dart';
 import 'package:flutter/material.dart';
 import '../../data/services/cat_api_service.dart';
 import '../widgets/action_buttons.dart';
@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  late final CatRepository _catRepository;
+  late final CatRepositoryImpl _catRepository;
   Cat? _currentCat;
   int _likeCounter = 0;
   bool _isLoading = false;
@@ -26,7 +26,7 @@ class HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _catRepository = CatRepository(apiService: CatApiService());
+    _catRepository = CatRepositoryImpl(apiService: CatApiService());
     _loadNewCat();
 
     _heartAnimationController = AnimationController(
