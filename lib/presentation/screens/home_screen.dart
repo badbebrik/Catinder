@@ -1,181 +1,176 @@
-import 'package:catinder/data/repositories/cat_repository_impl.dart';
 import 'package:flutter/material.dart';
-import '../../data/services/cat_api_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubits/cat_feed_cubit.dart';
 import '../widgets/action_buttons.dart';
 import '../widgets/cat_card.dart';
-import 'package:catinder/domain/entities/cat.dart';
-
 import 'detail_screen.dart';
+import 'liked_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  HomeScreenState createState() => HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen>
+class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  late final CatRepositoryImpl _catRepository;
-  Cat? _currentCat;
-  int _likeCounter = 0;
-  bool _isLoading = false;
-  late AnimationController _heartAnimationController;
-  late Animation<double> _heartAnimation;
+  late final AnimationController _heartCtrl;
+  late final Animation<double> _heartAnim;
 
   @override
   void initState() {
     super.initState();
-    _catRepository = CatRepositoryImpl(apiService: CatApiService());
-    _loadNewCat();
-
-    _heartAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
-    _heartAnimation = TweenSequence<double>([
+    _heartCtrl =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _heartAnim = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.2)
-            .chain(CurveTween(curve: Curves.easeOut)),
-        weight: 50,
-      ),
+          tween: Tween(begin: 1.0, end: 1.2)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 50),
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.2, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeIn)),
-        weight: 50,
-      ),
-    ]).animate(_heartAnimationController);
+          tween: Tween(begin: 1.2, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeIn)),
+          weight: 50),
+    ]).animate(_heartCtrl);
   }
 
   @override
   void dispose() {
-    _heartAnimationController.dispose();
+    _heartCtrl.dispose();
     super.dispose();
-  }
-
-  Future<void> _loadNewCat() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final cat = await _catRepository.getRandomCat();
-    setState(() {
-      _currentCat = cat;
-      _isLoading = false;
-    });
-  }
-
-  void _handleLike() {
-    setState(() {
-      _likeCounter++;
-    });
-    _heartAnimationController.forward().then((_) {
-      _heartAnimationController.reset();
-    });
-    _loadNewCat();
-  }
-
-  void _handleDislike() {
-    _loadNewCat();
   }
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<CatFeedCubit>();
+
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Cat',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            Text(
-              'inder',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Icon(
-              Icons.pets,
-              color: Colors.blueAccent,
-              size: 28,
-            ),
-          ],
-        ),
         elevation: 0,
         backgroundColor: Colors.white,
         centerTitle: true,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text('Cat',
+                style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text('inder',
+                style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueAccent)),
+            SizedBox(width: 8),
+            Icon(Icons.pets, color: Colors.blueAccent, size: 28),
+          ],
+        ),
         actions: [
-          Center(
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              margin: const EdgeInsets.only(right: 16.0),
-              child: Row(
-                children: [
-                  ScaleTransition(
-                    scale: _heartAnimation,
-                    child: const Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '$_likeCounter',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+          BlocBuilder<CatFeedCubit, CatFeedState>(
+            builder: (_, state) => ScaleTransition(
+              scale: _heartAnim,
+              child: Container(
+                margin: const EdgeInsets.only(right: 16),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.favorite, color: Colors.red, size: 24),
+                    const SizedBox(width: 6),
+                    Text('${state.likes}',
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                  ],
+                ),
               ),
             ),
           ),
         ],
       ),
-      body: _isLoading || _currentCat == null
-          ? const Center(child: CircularProgressIndicator())
-          : Stack(
+      body: BlocConsumer<CatFeedCubit, CatFeedState>(
+        listener: (context, state) {
+          if (state is! CatFeedLoading && state is! CatFeedInitial) {
+            _heartCtrl.forward().then((_) => _heartCtrl.reset());
+          }
+          if (state is CatFeedError) {
+            showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: const Text('Ошибка сети'),
+                content: Text(state.message),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is CatFeedLoading || state is CatFeedInitial) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is CatFeedLoaded) {
+            final cat = state.cat;
+            return Stack(
               fit: StackFit.expand,
               children: [
-                Positioned.fill(
-                  child: CatCard(
-                    cat: _currentCat!,
-                    onLike: _handleLike,
-                    onDislike: _handleDislike,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailScreen(cat: _currentCat!),
-                        ),
-                      );
-                    },
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: FloatingActionButton.small(
+                    heroTag: 'likesScreenBtn',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LikedScreen()),
+                    ),
+                    backgroundColor: Colors.blueAccent,
+                    child: const Icon(Icons.favorite, color: Colors.white),
+                  ),
+                ),
+                CatCard(
+                  cat: cat,
+                  onLike: () => cubit.likeCurrent(),
+                  onDislike: () => cubit.dislikeCurrent(),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => DetailScreen(cat: cat)),
                   ),
                 ),
                 Positioned(
+                  bottom: 32,
                   left: 32,
                   right: 32,
-                  bottom: 32,
                   child: ActionButtons(
-                      onLike: _handleLike, onDislike: _handleDislike),
+                    onLike: () => cubit.likeCurrent(),
+                    onDislike: () => cubit.dislikeCurrent(),
+                  ),
                 ),
               ],
-            ),
+            );
+          }
+
+          if (state is CatFeedError) {
+            return Center(
+              child: ElevatedButton(
+                onPressed: () => cubit.loadNext(),
+                child: const Text('Повторить'),
+              ),
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 }
