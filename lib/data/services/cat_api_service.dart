@@ -38,4 +38,16 @@ class CatApiService {
 
     return null;
   }
+
+  Future<void> vote(String imageId, int value) async {
+    await http.post(Uri.parse('$_baseURL/votes'),
+        headers: {
+          'x-api-key': _apiKey,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'image_id': imageId,
+          'value': value,
+        }));
+  }
 }
