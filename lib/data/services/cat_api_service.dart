@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:catinder/dto/cat_dto.dart';
 import 'package:http/http.dart' as http;
+
+import '../dto/cat_dto.dart';
 
 class CatApiService {
   final String _baseURL = "https://api.thecatapi.com/v1";

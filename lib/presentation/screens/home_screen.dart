@@ -1,10 +1,11 @@
-import 'package:catinder/repositories/cat_repository.dart';
-import 'package:catinder/services/cat_api_service.dart';
+import 'package:catinder/domain/repositories/cat_repository_impl.dart';
 import 'package:flutter/material.dart';
-import 'action_buttons.dart';
+import '../../data/services/cat_api_service.dart';
+import '../widgets/action_buttons.dart';
+import '../widgets/cat_card.dart';
+import 'package:catinder/domain/entities/cat.dart';
+
 import 'detail_screen.dart';
-import 'cat_card.dart';
-import 'package:catinder/models/cat.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

@@ -1,5 +1,5 @@
-import 'package:catinder/services/cat_api_service.dart';
-import '../models/cat.dart';
+import '../../data/services/cat_api_service.dart';
+import '../entities/cat.dart';
 
 class CatRepository {
   final CatApiService apiService;

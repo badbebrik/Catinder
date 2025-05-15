@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:developer' as developer;
-import 'package:catinder/models/cat.dart';
+import 'package:catinder/domain/entities/cat.dart';
 
 class CatCard extends StatefulWidget {
   final Cat cat;
