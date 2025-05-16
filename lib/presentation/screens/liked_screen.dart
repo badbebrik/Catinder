@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import '../../../domain/entities/liked_cat.dart';
 import '../cubits/liked_cats_cubit.dart';
 import '../widgets/liked_card.dart';
-import 'detail_screen.dart';
 
 class LikedScreen extends StatelessWidget {
   const LikedScreen({super.key});
