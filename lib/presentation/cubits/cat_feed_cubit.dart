@@ -47,23 +47,28 @@ class CatFeedCubit extends Cubit<CatFeedState> {
   Future<void> likeCurrent() async {
     if (_current == null || _busy) return;
     _busy = true;
-    try {
-      await _likeCat(_current!);
-      await loadNext();
-    } finally {
-      _busy = false;
-    }
+
+    emit(CatFeedTransition(_current!, likes: state.likes));
+    await Future.wait([
+      _likeCat(_current!),
+      loadNext(),
+    ]);
+
+    _busy = false;
   }
 
   Future<void> dislikeCurrent() async {
     if (_current == null || _busy) return;
     _busy = true;
-    try {
-      await _dislikeCat(_current!);
-      await loadNext();
-    } finally {
-      _busy = false;
-    }
+
+    emit(CatFeedTransition(_current!, likes: state.likes));
+
+    await Future.wait([
+      _dislikeCat(_current!),
+      loadNext(),
+    ]);
+
+    _busy = false;
   }
 
   CatFeedState _rebuildWithLikes(int likes) {

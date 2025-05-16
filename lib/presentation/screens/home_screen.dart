@@ -121,6 +121,22 @@ class _HomeScreenState extends State<HomeScreen>
             return const Center(child: CircularProgressIndicator());
           }
 
+          if (state is CatFeedTransition) {
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                CatCard(
+                  cat: state.previous,
+                  onLike: () {},
+                  onDislike: () {},
+                  onTap: () {},
+                ),
+                Container(color: Colors.white70),
+                const Center(child: CircularProgressIndicator()),
+              ],
+            );
+          }
+
           if (state is CatFeedLoaded) {
             final cat = state.cat;
             return Stack(

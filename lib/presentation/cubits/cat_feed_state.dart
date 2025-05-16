@@ -23,3 +23,9 @@ class CatFeedError extends CatFeedState {
   const CatFeedError(this.message, {required int likes})
       : super(likes: likes);
 }
+
+class CatFeedTransition extends CatFeedState {
+  final Cat previous;
+  const CatFeedTransition(this.previous, {required int likes})
+      : super(likes: likes);
+}
