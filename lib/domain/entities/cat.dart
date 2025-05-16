@@ -1,4 +1,4 @@
-import '../dto/cat_dto.dart';
+import '../../data/dto/cat_dto.dart';
 import 'breed.dart';
 
 class Cat {

@@ -1,10 +1,23 @@
+import 'package:catinder/presentation/cubits/cat_feed_cubit.dart';
+import 'package:catinder/presentation/cubits/liked_cats_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'widgets//home_screen.dart';
+import 'infrastructure/di.dart';
+import 'presentation/screens/home_screen.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
-  runApp(const CatotinderApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+  await initDi();
+
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => sl<CatFeedCubit>()..loadNext()),
+      BlocProvider(create: (_) => sl<LikedCatsCubit>()),
+    ],
+    child: const CatotinderApp(),
+  ));
 }
 
 class CatotinderApp extends StatelessWidget {
