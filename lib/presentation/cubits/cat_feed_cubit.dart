@@ -17,6 +17,7 @@ class CatFeedCubit extends Cubit<CatFeedState> {
 
   StreamSubscription<List<LikedCat>>? _sub;
   Cat? _current;
+  bool _busy = false;
 
   CatFeedCubit({
     required GetRandomCat getRandomCat,
@@ -44,15 +45,25 @@ class CatFeedCubit extends Cubit<CatFeedState> {
   }
 
   Future<void> likeCurrent() async {
-    if (_current == null) return;
-    await _likeCat(_current!);
-    await loadNext();
+    if (_current == null || _busy) return;
+    _busy = true;
+    try {
+      await _likeCat(_current!);
+      await loadNext();
+    } finally {
+      _busy = false;
+    }
   }
 
   Future<void> dislikeCurrent() async {
-    if (_current == null) return;
-    await _dislikeCat(_current!);
-    await loadNext();
+    if (_current == null || _busy) return;
+    _busy = true;
+    try {
+      await _dislikeCat(_current!);
+      await loadNext();
+    } finally {
+      _busy = false;
+    }
   }
 
   CatFeedState _rebuildWithLikes(int likes) {
