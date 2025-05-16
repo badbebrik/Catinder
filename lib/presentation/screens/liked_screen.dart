@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../domain/entities/liked_cat.dart';
 import '../cubits/liked_cats_cubit.dart';
 import 'detail_screen.dart';
@@ -12,91 +13,178 @@ class LikedScreen extends StatelessWidget {
     final cubit = context.read<LikedCatsCubit>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Liked cats')),
-      body: Column(
-        children: [
-          BlocBuilder<LikedCatsCubit, LikedCatsState>(
-            builder: (_, state) {
-              if (state is! LikedCatsLoaded) return const SizedBox.shrink();
+      body: BlocBuilder<LikedCatsCubit, LikedCatsState>(
+        builder: (context, state) {
+          if (state is LikedCatsLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is LikedCatsError) {
+            return Center(child: Text(state.message));
+          }
 
-              final breedsMap = <String, String>{};
-              for (final like in state.allCats) {
-                final b = like.cat.breed;
-                if (b != null) breedsMap[b.id] = b.name;
-              }
+          final loaded = state as LikedCatsLoaded;
+          final breedsMap = <String, String>{};
+          for (final like in loaded.allCats) {
+            final b = like.cat.breed;
+            if (b != null) breedsMap[b.id] = b.name;
+          }
 
-              final items = [
-                const DropdownMenuItem<String?>(
-                    value: null, child: Text('All')),
-                ...breedsMap.entries.map((e) => DropdownMenuItem<String?>(
-                  value: e.key,
-                  child: Text(e.value),
-                )),
-              ];
-
-              return Padding(
-                padding: const EdgeInsets.all(8),
-                child: DropdownButton<String?>(
-                  isExpanded: true,
-                  value: state.selectedBreed,
-                  items: items,
-                  onChanged: cubit.setBreedFilter,
+          return CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                backgroundColor: Colors.white,
+                elevation: 0,
+                centerTitle: true,
+                expandedHeight: 90,
+                flexibleSpace: SafeArea(
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Text('Cat',
+                            style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black)),
+                        Text('inder',
+                            style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueAccent)),
+                        SizedBox(width: 8),
+                        Icon(Icons.pets, color: Colors.blueAccent, size: 28),
+                      ],
+                    ),
+                  ),
                 ),
-              );
-            },
-          ),
+              ),
 
-          Expanded(
-            child: BlocBuilder<LikedCatsCubit, LikedCatsState>(
-              builder: (_, state) {
-                if (state is LikedCatsLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is LikedCatsError) {
-                  return Center(child: Text(state.message));
-                }
-                if (state is LikedCatsLoaded) {
-                  if (state.cats.isEmpty) {
-                    return const Center(child: Text('No cats yet'));
-                  }
-                  return ListView.builder(
-                    itemCount: state.cats.length,
-                    itemBuilder: (_, i) =>
-                        _LikedTile(liked: state.cats[i]),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-        ],
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DropdownButton<String?>(
+                        value: loaded.selectedBreed,
+                        isExpanded: true,
+                        hint: const Text('Filter by breed'),
+                        items: [
+                          const DropdownMenuItem(
+                              value: null, child: Text('All')),
+                          ...breedsMap.entries.map(
+                                (e) => DropdownMenuItem(
+                              value: e.key,
+                              child: Text(e.value),
+                            ),
+                          ),
+                        ],
+                        onChanged: cubit.setBreedFilter,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Total: ${loaded.cats.length}',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              loaded.cats.isEmpty
+                  ? SliverFillRemaining(
+                child: Center(
+                  child: Text(
+                    'No cats yet',
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                ),
+              )
+                  : SliverList.builder(
+                itemCount: loaded.cats.length,
+                itemBuilder: (_, i) =>
+                    _LikedCard(liked: loaded.cats[i]),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 }
 
-class _LikedTile extends StatelessWidget {
+class _LikedCard extends StatelessWidget {
   final LikedCat liked;
-  const _LikedTile({required this.liked});
+  const _LikedCard({required this.liked});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<LikedCatsCubit>();
+    final breedName = liked.cat.breed?.name ?? 'Cat';
 
-    return Dismissible(
-      key: ValueKey(liked.cat.id),
-      onDismissed: (_) => cubit.delete(liked.cat.id),
-      background: Container(color: Colors.red),
-      child: ListTile(
-        leading: Image.network(liked.cat.imageUrl,
-            width: 60, height: 60, fit: BoxFit.cover),
-        title: Text(liked.cat.breed?.name ?? 'Cat'),
-        subtitle: Text(
-            'Liked ${liked.likedAt.toLocal().toString().substring(0, 16)}'),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: GestureDetector(
         onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (_) => DetailScreen(cat: liked.cat)),
+          MaterialPageRoute(builder: (_) => DetailScreen(cat: liked.cat)),
+        ),
+        child: Card(
+          elevation: 6,
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          clipBehavior: Clip.antiAlias,
+          child: SizedBox(
+            height: 160,
+            child: Row(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: liked.cat.imageUrl,
+                  width: 160,
+                  height: 160,
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) => Container(
+                    width: 160,
+                    height: 160,
+                    color: Colors.grey[200],
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (_, __, ___) => const Icon(Icons.error),
+                ),
+
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(breedName,
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Liked ${liked.likedAt.toLocal().toString().substring(0, 16)}',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        const Spacer(),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.delete_outline),
+                            color: Colors.red,
+                            onPressed: () => cubit.delete(liked.cat.id),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
