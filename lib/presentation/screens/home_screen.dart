@@ -119,9 +119,7 @@ class _HomeScreenState extends State<HomeScreen>
         builder: (context, state) {
           if (state is CatFeedLoading || state is CatFeedInitial) {
             return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state is CatFeedTransition) {
+          } else if (state is CatFeedTransition) {
             return Stack(
               fit: StackFit.expand,
               children: [
