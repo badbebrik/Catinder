@@ -1,4 +1,3 @@
-
 import 'cat.dart';
 
 class LikedCat {

@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,7 +8,7 @@ import '../screens/detail_screen.dart';
 
 class LikedCard extends StatelessWidget {
   final LikedCat liked;
-  const LikedCard({required this.liked});
+  const LikedCard({super.key, required this.liked});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,6 @@ class LikedCard extends StatelessWidget {
                   ),
                   errorWidget: (_, __, ___) => const Icon(Icons.error),
                 ),
-
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(

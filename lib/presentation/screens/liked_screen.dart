@@ -57,11 +57,10 @@ class LikedScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               SliverToBoxAdapter(
                 child: Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -73,7 +72,7 @@ class LikedScreen extends StatelessWidget {
                           const DropdownMenuItem(
                               value: null, child: Text('All')),
                           ...breedsMap.entries.map(
-                                (e) => DropdownMenuItem(
+                            (e) => DropdownMenuItem(
                               value: e.key,
                               child: Text(e.value),
                             ),
@@ -91,21 +90,19 @@ class LikedScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               loaded.cats.isEmpty
                   ? SliverFillRemaining(
-                child: Center(
-                  child: Text(
-                    'No cats yet',
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                ),
-              )
+                      child: Center(
+                        child: Text(
+                          'No cats yet',
+                          style: Theme.of(context).textTheme.headlineLarge,
+                        ),
+                      ),
+                    )
                   : SliverList.builder(
-                itemCount: loaded.cats.length,
-                itemBuilder: (_, i) =>
-                    LikedCard(liked: loaded.cats[i]),
-              ),
+                      itemCount: loaded.cats.length,
+                      itemBuilder: (_, i) => LikedCard(liked: loaded.cats[i]),
+                    ),
             ],
           );
         },
@@ -113,4 +110,3 @@ class LikedScreen extends StatelessWidget {
     );
   }
 }
-

@@ -13,7 +13,6 @@ import '../domain/usecases/watch_liked_cats.dart';
 import '../presentation/cubits/cat_feed_cubit.dart';
 import '../presentation/cubits/liked_cats_cubit.dart';
 
-
 final sl = GetIt.instance;
 
 Future<void> initDi() async {
@@ -24,7 +23,7 @@ Future<void> initDi() async {
   sl.registerLazySingleton(() => CatRepositoryImpl(remote: sl(), local: sl()));
 
   sl.registerLazySingleton<CatRepository>(
-          () => CatRepositoryImpl(remote: sl(), local: sl()));
+      () => CatRepositoryImpl(remote: sl(), local: sl()));
 
   sl.registerLazySingleton(() => GetRandomCat(sl()));
   sl.registerLazySingleton(() => LikeCat(sl()));
@@ -33,15 +32,14 @@ Future<void> initDi() async {
   sl.registerLazySingleton(() => WatchLikedCats(sl()));
 
   sl.registerFactory(() => CatFeedCubit(
-    getRandomCat: sl(),
-    likeCat: sl(),
-    dislikeCat: sl(),
-    watchLiked:   sl(),
-  ));
+        getRandomCat: sl(),
+        likeCat: sl(),
+        dislikeCat: sl(),
+        watchLiked: sl(),
+      ));
 
   sl.registerFactory(() => LikedCatsCubit(
-    watchLiked: sl(),
-    removeLike: sl(),
-  ));
-
+        watchLiked: sl(),
+        removeLike: sl(),
+      ));
 }

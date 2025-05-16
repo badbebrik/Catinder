@@ -73,10 +73,10 @@ class CatFeedCubit extends Cubit<CatFeedState> {
 
   CatFeedState _rebuildWithLikes(int likes) {
     return switch (state) {
-      CatFeedLoaded s  => CatFeedLoaded(s.cat, likes: likes),
+      CatFeedLoaded s => CatFeedLoaded(s.cat, likes: likes),
       CatFeedLoading _ => CatFeedLoading(likes: likes),
-      CatFeedError  s  => CatFeedError(s.message, likes: likes),
-      _                => CatFeedInitial(likes: likes),
+      CatFeedError s => CatFeedError(s.message, likes: likes),
+      _ => CatFeedInitial(likes: likes),
     };
   }
 

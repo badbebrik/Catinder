@@ -22,8 +22,8 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _heartCtrl =
-        AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _heartCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
     _heartAnim = TweenSequence<double>([
       TweenSequenceItem(
           tween: Tween(begin: 1.0, end: 1.2)
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen>
               child: Container(
                 margin: const EdgeInsets.only(right: 16),
                 padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),

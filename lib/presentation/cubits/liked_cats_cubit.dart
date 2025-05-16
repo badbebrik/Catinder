@@ -28,8 +28,7 @@ class LikedCatsCubit extends Cubit<LikedCatsState> {
   }
 
   void _onData(List<LikedCat> list) {
-    final hasSelectedBreed = list
-        .any((e) => e.cat.breed?.id == _breedFilter);
+    final hasSelectedBreed = list.any((e) => e.cat.breed?.id == _breedFilter);
     if (!hasSelectedBreed) _breedFilter = null;
 
     final filtered = _breedFilter == null
@@ -43,8 +42,7 @@ class LikedCatsCubit extends Cubit<LikedCatsState> {
     ));
   }
 
-  void _onError(Object e) =>
-      emit(LikedCatsError(e.toString()));
+  void _onError(Object e) => emit(LikedCatsError(e.toString()));
 
   void setBreedFilter(String? breedId) {
     _breedFilter = breedId;
