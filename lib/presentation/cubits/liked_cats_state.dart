@@ -1,5 +1,3 @@
-// liked_cats_state.dart – без изменений
-
 part of 'liked_cats_cubit.dart';
 
 abstract class LikedCatsState {}

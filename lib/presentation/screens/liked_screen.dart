@@ -124,9 +124,10 @@ class _LikedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<LikedCatsCubit>();
     final breedName = liked.cat.breed?.name ?? 'Cat';
+    final likedAtString = liked.likedAt.toLocal().toString().substring(0, 16);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: GestureDetector(
         onTap: () => Navigator.push(
           context,
@@ -134,8 +135,9 @@ class _LikedCard extends StatelessWidget {
         ),
         child: Card(
           elevation: 6,
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           clipBehavior: Clip.antiAlias,
           child: SizedBox(
             height: 160,
@@ -147,8 +149,6 @@ class _LikedCard extends StatelessWidget {
                   height: 160,
                   fit: BoxFit.cover,
                   placeholder: (_, __) => Container(
-                    width: 160,
-                    height: 160,
                     color: Colors.grey[200],
                     child: const Center(child: CircularProgressIndicator()),
                   ),
@@ -157,25 +157,46 @@ class _LikedCard extends StatelessWidget {
 
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(breedName,
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Liked ${liked.likedAt.toLocal().toString().substring(0, 16)}',
-                          style: const TextStyle(color: Colors.grey),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              breedName,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Liked $likedAtString',
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ],
                         ),
-                        const Spacer(),
                         Align(
                           alignment: Alignment.bottomRight,
                           child: IconButton(
+                            onPressed: () => cubit.delete(liked.cat.id),
                             icon: const Icon(Icons.delete_outline),
                             color: Colors.red,
-                            onPressed: () => cubit.delete(liked.cat.id),
+                            iconSize: 24,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(
+                              minWidth: 24,
+                              minHeight: 24,
+                            ),
                           ),
                         ),
                       ],
