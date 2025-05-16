@@ -1,4 +1,4 @@
-import 'package:catinder/dto/breed_dto.dart';
+import 'package:catinder/data/dto/breed_dto.dart';
 
 class CatDTO {
   final String id;

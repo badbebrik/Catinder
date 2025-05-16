@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:developer' as developer;
-import 'package:catinder/models/cat.dart';
+import 'package:catinder/domain/entities/cat.dart';
 
 class CatCard extends StatefulWidget {
   final Cat cat;
@@ -78,80 +78,42 @@ class _CatCardState extends State<CatCard> with SingleTickerProviderStateMixin {
 
   void _onDragEnd(DragEndDetails details) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final dragPercentage = _dragOffset.dx / screenWidth;
+    final dragPercent = _dragOffset.dx / screenWidth;
+    final accepted = dragPercent.abs() > _swipeThreshold;
 
-    if (dragPercentage.abs() > _swipeThreshold) {
-      final endSlide = Offset(
-        dragPercentage > 0 ? screenWidth : -screenWidth,
-        0,
-      );
+    final endSlide = accepted
+        ? Offset(dragPercent > 0 ? screenWidth : -screenWidth, 0)
+        : Offset.zero;
 
-      _slideAnimation = Tween<Offset>(
-        begin: _dragOffset,
-        end: endSlide,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ));
+    _slideAnimation = Tween<Offset>(begin: _dragOffset, end: endSlide)
+        .animate(CurvedAnimation(
+      parent: _animationController,
+      curve: accepted ? Curves.easeOut : Curves.elasticOut,
+    ));
 
-      _rotationAnimation = Tween<double>(
-        begin: _rotation,
-        end: _rotation * 2,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ));
+    _rotationAnimation = Tween<double>(
+      begin: _rotation,
+      end: accepted ? _rotation * 2 : 0,
+    ).animate(_animationController);
 
-      _opacityAnimation = Tween<double>(
-        begin: _opacity,
-        end: 0.0,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ));
+    _opacityAnimation = Tween<double>(
+      begin: _opacity,
+      end: accepted ? 0 : 1,
+    ).animate(_animationController);
 
-      _animationController.addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          if (dragPercentage > 0) {
-            widget.onLike();
-          } else {
-            widget.onDislike();
-          }
+    _animationController
+      ..reset()
+      ..forward();
+
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        if (accepted) {
+          dragPercent > 0 ? widget.onLike() : widget.onDislike();
+        } else {
+          _resetCard();
         }
-      });
-
-      _animationController.forward().then((_) {
-        _resetCard();
-      });
-    } else {
-      _slideAnimation = Tween<Offset>(
-        begin: _dragOffset,
-        end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.elasticOut,
-      ));
-
-      _rotationAnimation = Tween<double>(
-        begin: _rotation,
-        end: 0.0,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.elasticOut,
-      ));
-
-      _opacityAnimation = Tween<double>(
-        begin: _opacity,
-        end: 1.0,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ));
-
-      _animationController.forward().then((_) {
-        _resetCard();
-      });
-    }
+      }
+    });
   }
 
   void _resetCard() {

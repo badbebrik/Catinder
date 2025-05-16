@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:catinder/dto/cat_dto.dart';
 import 'package:http/http.dart' as http;
+
+import '../dto/cat_dto.dart';
 
 class CatApiService {
   final String _baseURL = "https://api.thecatapi.com/v1";
@@ -36,5 +37,17 @@ class CatApiService {
     }
 
     return null;
+  }
+
+  Future<void> vote(String imageId, int value) async {
+    await http.post(Uri.parse('$_baseURL/votes'),
+        headers: {
+          'x-api-key': _apiKey,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'image_id': imageId,
+          'value': value,
+        }));
   }
 }

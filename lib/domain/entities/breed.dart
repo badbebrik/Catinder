@@ -1,4 +1,4 @@
-import '../dto/breed_dto.dart';
+import '../../data/dto/breed_dto.dart';
 
 class Breed {
   final String id;
