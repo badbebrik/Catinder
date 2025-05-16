@@ -17,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _heartCtrl;
   late final Animation<double> _heartAnim;
+  int _prevLikes = 0;
 
   @override
   void initState() {
@@ -95,9 +96,10 @@ class _HomeScreenState extends State<HomeScreen>
       ),
       body: BlocConsumer<CatFeedCubit, CatFeedState>(
         listener: (context, state) {
-          if (state is! CatFeedLoading && state is! CatFeedInitial) {
+          if (state.likes > _prevLikes) {
             _heartCtrl.forward().then((_) => _heartCtrl.reset());
           }
+          _prevLikes = state.likes;
           if (state is CatFeedError) {
             showDialog(
               context: context,
