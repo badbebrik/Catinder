@@ -36,6 +36,7 @@ Future<void> initDi() async {
     getRandomCat: sl(),
     likeCat: sl(),
     dislikeCat: sl(),
+    watchLiked:   sl(),
   ));
 
   sl.registerFactory(() => LikedCatsCubit(

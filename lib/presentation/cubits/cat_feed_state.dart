@@ -6,19 +6,20 @@ abstract class CatFeedState {
 }
 
 class CatFeedInitial extends CatFeedState {
-  CatFeedInitial() : super(likes: 0);
+  const CatFeedInitial({required int likes}) : super(likes: likes);
 }
 
 class CatFeedLoading extends CatFeedState {
-  CatFeedLoading({required super.likes});
+  const CatFeedLoading({required int likes}) : super(likes: likes);
 }
 
 class CatFeedLoaded extends CatFeedState {
   final Cat cat;
-  CatFeedLoaded(this.cat, {required super.likes});
+  const CatFeedLoaded(this.cat, {required int likes}) : super(likes: likes);
 }
 
 class CatFeedError extends CatFeedState {
   final String message;
-  CatFeedError(this.message, {required super.likes});
+  const CatFeedError(this.message, {required int likes})
+      : super(likes: likes);
 }
