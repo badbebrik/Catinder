@@ -1,9 +1,10 @@
-import 'package:catinder/data/datasources/local_liked_cat_datasource.dart';
 import 'package:catinder/data/datasources/remote_cat_datasource.dart';
 import 'package:catinder/data/repositories/cat_repository_impl.dart';
 import 'package:catinder/data/services/cat_api_service.dart';
 import 'package:get_it/get_it.dart';
 
+import '../data/datasources/local_cat_datasource.dart';
+import '../data/local/app_database.dart';
 import '../domain/repositories/cat_repository.dart';
 import '../domain/usecases/dislike_cat.dart';
 import '../domain/usecases/get_random_cat.dart';
@@ -18,12 +19,14 @@ final sl = GetIt.instance;
 Future<void> initDi() async {
   sl.registerLazySingleton(() => CatApiService());
   sl.registerLazySingleton(() => RemoteCatDatasource(api: sl<CatApiService>()));
-  sl.registerLazySingleton(() => LocalLikedCatDatasource());
 
-  sl.registerLazySingleton(() => CatRepositoryImpl(remote: sl(), local: sl()));
+  sl.registerLazySingleton(() => AppDatabase());
+  sl.registerLazySingleton(() => LocalCatDatasource(sl<AppDatabase>()));
+
+  sl.registerLazySingleton(() => CatRepositoryImpl(remote: sl(), local: sl(), db: sl()));
 
   sl.registerLazySingleton<CatRepository>(
-      () => CatRepositoryImpl(remote: sl(), local: sl()));
+      () => CatRepositoryImpl(remote: sl(), local: sl(), db: sl()));
 
   sl.registerLazySingleton(() => GetRandomCat(sl()));
   sl.registerLazySingleton(() => LikeCat(sl()));
