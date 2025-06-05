@@ -62,8 +62,7 @@ void main() {
       expect(cubit.state.likes, 0);
     });
 
-    test('subscribe на watchLiked',
-        () async {
+    test('subscribe на watchLiked', () async {
       final controller = StreamController<List<LikedCat>>();
       when(mockWatchLikedCats.call()).thenAnswer((_) => controller.stream);
 
