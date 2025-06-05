@@ -24,7 +24,8 @@ Future<void> initDi() async {
   sl.registerLazySingleton(() => AppDatabase());
   sl.registerLazySingleton(() => LocalCatDatasource(sl<AppDatabase>()));
 
-  sl.registerLazySingleton(() => CatRepositoryImpl(remote: sl(), local: sl(), db: sl()));
+  sl.registerLazySingleton(
+      () => CatRepositoryImpl(remote: sl(), local: sl(), db: sl()));
 
   sl.registerLazySingleton<CatRepository>(
       () => CatRepositoryImpl(remote: sl(), local: sl(), db: sl()));

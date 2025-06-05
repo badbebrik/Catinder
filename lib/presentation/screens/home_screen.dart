@@ -36,8 +36,8 @@ class _HomeScreenState extends State<HomeScreen>
         weight: 50,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.2, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeIn)),
+        tween:
+            Tween(begin: 1.2, end: 1.0).chain(CurveTween(curve: Curves.easeIn)),
         weight: 50,
       ),
     ]).animate(_heartCtrl);
@@ -112,8 +112,8 @@ class _HomeScreenState extends State<HomeScreen>
                 scale: _heartAnim,
                 child: Container(
                   margin: const EdgeInsets.only(right: 16),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -135,7 +135,6 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         ],
       ),
-
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -166,8 +165,7 @@ class _HomeScreenState extends State<HomeScreen>
                 }
               },
               builder: (context, state) {
-                if (state is CatFeedLoading ||
-                    state is CatFeedInitial) {
+                if (state is CatFeedLoading || state is CatFeedInitial) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is CatFeedTransition) {
                   return Stack(
@@ -199,8 +197,8 @@ class _HomeScreenState extends State<HomeScreen>
                                 builder: (_) => const LikedScreen()),
                           ),
                           backgroundColor: Colors.blueAccent,
-                          child: const Icon(Icons.favorite,
-                              color: Colors.white),
+                          child:
+                              const Icon(Icons.favorite, color: Colors.white),
                         ),
                       ),
                       CatCard(
@@ -210,8 +208,7 @@ class _HomeScreenState extends State<HomeScreen>
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) =>
-                                  DetailScreen(cat: cat)),
+                              builder: (_) => DetailScreen(cat: cat)),
                         ),
                       ),
                       Positioned(
@@ -220,8 +217,7 @@ class _HomeScreenState extends State<HomeScreen>
                         right: 32,
                         child: ActionButtons(
                           onLike: () => catFeedCubit.likeCurrent(),
-                          onDislike: () =>
-                              catFeedCubit.dislikeCurrent(),
+                          onDislike: () => catFeedCubit.dislikeCurrent(),
                         ),
                       ),
                     ],
@@ -237,7 +233,6 @@ class _HomeScreenState extends State<HomeScreen>
                 return const SizedBox.shrink();
               },
             ),
-
           Positioned(
             top: 12,
             right: 12,

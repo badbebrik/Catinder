@@ -11,7 +11,6 @@ import '../dto/cat_dto.dart';
 
 part 'app_database.g.dart';
 
-
 class CachedCats extends Table {
   TextColumn get id => text()();
   TextColumn get json => text()();
@@ -21,8 +20,7 @@ class CachedCats extends Table {
 
 class LikedCatsTable extends Table {
   TextColumn get catId => text()();
-  DateTimeColumn get likedAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get likedAt => dateTime().withDefault(currentDateAndTime)();
   @override
   Set<Column> get primaryKey => {catId};
 }
@@ -30,23 +28,23 @@ class LikedCatsTable extends Table {
 Cat _catFromJson(String raw) =>
     Cat.fromDTO(CatDTO.fromJson(jsonDecode(raw) as Map<String, dynamic>));
 String _catToJson(Cat cat) => jsonEncode({
-  'id': cat.id,
-  'url': cat.imageUrl,
-  'width': cat.width,
-  'height': cat.height,
-  'mime_type': cat.mimeType,
-  'breeds': cat.breed == null ? [] : [_breedToMap(cat.breed!)],
-});
+      'id': cat.id,
+      'url': cat.imageUrl,
+      'width': cat.width,
+      'height': cat.height,
+      'mime_type': cat.mimeType,
+      'breeds': cat.breed == null ? [] : [_breedToMap(cat.breed!)],
+    });
 
 Map<String, dynamic> _breedToMap(Breed b) => {
-  'id': b.id,
-  'name': b.name,
-  'weight': {'metric': b.weight},
-  'temperament': b.temperament,
-  'origin': b.origin,
-  'description': b.description,
-  'life_span': b.lifeSpan,
-};
+      'id': b.id,
+      'name': b.name,
+      'weight': {'metric': b.weight},
+      'temperament': b.temperament,
+      'origin': b.origin,
+      'description': b.description,
+      'life_span': b.lifeSpan,
+    };
 
 @DriftDatabase(tables: [CachedCats, LikedCatsTable])
 class AppDatabase extends _$AppDatabase {
@@ -56,11 +54,11 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => 1;
 
   Future<void> cacheCat(Cat cat) => into(cachedCats).insertOnConflictUpdate(
-    CachedCatsCompanion(
-      id: Value(cat.id),
-      json: Value(_catToJson(cat)),
-    ),
-  );
+        CachedCatsCompanion(
+          id: Value(cat.id),
+          json: Value(_catToJson(cat)),
+        ),
+      );
 
   Future<Cat?> getRandomCachedCat() async {
     final row = await customSelect(

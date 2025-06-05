@@ -17,7 +17,7 @@ class ConnectivityCubit extends Cubit<ConnectivityStatus> {
 
   void _onChange(List<ConnectivityResult> results) async {
     final hasInterface = results.any(
-          (r) => r == ConnectivityResult.wifi || r == ConnectivityResult.mobile,
+      (r) => r == ConnectivityResult.wifi || r == ConnectivityResult.mobile,
     );
 
     if (!hasInterface) {
@@ -30,7 +30,7 @@ class ConnectivityCubit extends Cubit<ConnectivityStatus> {
 
     final hasInet = await _checkTcpInternet();
     final newStatus =
-    hasInet ? ConnectivityStatus.online : ConnectivityStatus.offline;
+        hasInet ? ConnectivityStatus.online : ConnectivityStatus.offline;
 
     if (state != newStatus) {
       print('[ConnectivityCubit] onChange: $results + TCP → $newStatus');
