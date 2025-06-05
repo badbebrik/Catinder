@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -22,7 +23,7 @@ class ConnectivityCubit extends Cubit<ConnectivityStatus> {
 
     if (!hasInterface) {
       if (state != ConnectivityStatus.offline) {
-        print('[ConnectivityCubit] onChange: $results → offline');
+        log('[ConnectivityCubit] onChange: $results → offline');
         emit(ConnectivityStatus.offline);
       }
       return;
@@ -33,7 +34,7 @@ class ConnectivityCubit extends Cubit<ConnectivityStatus> {
         hasInet ? ConnectivityStatus.online : ConnectivityStatus.offline;
 
     if (state != newStatus) {
-      print('[ConnectivityCubit] onChange: $results + TCP → $newStatus');
+      log('[ConnectivityCubit] onChange: $results + TCP → $newStatus');
       emit(newStatus);
     }
   }

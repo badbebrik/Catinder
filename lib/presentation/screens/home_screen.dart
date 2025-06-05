@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:catinder/presentation/cubits/cat_feed_cubit.dart';
 import 'package:catinder/presentation/cubits/connectivity_cubit.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen>
   late final AnimationController _heartCtrl;
   late final Animation<double> _heartAnim;
   int _prevLikes = 0;
+  StreamSubscription<ConnectivityStatus>? _connectivitySub;
 
   @override
   void initState() {
@@ -43,12 +46,17 @@ class _HomeScreenState extends State<HomeScreen>
     ]).animate(_heartCtrl);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ConnectivityCubit>().stream.listen((status) {
+      final connectivityCubit = context.read<ConnectivityCubit>();
+      final catFeedCubit = context.read<CatFeedCubit>();
+
+      _connectivitySub = connectivityCubit.stream.listen((status) {
+        if (!mounted) return;
+
         if (status == ConnectivityStatus.offline) {
-          _showSnackBar(message: 'Нет соединения с интернетом');
+          _showSnackBar(message: 'Internet connection lost');
         } else {
-          _showSnackBar(message: 'Соединение восстановлено');
-          context.read<CatFeedCubit>().loadNext();
+          _showSnackBar(message: 'Connection restored');
+          catFeedCubit.loadNext();
         }
       });
     });
@@ -57,10 +65,13 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void dispose() {
     _heartCtrl.dispose();
+    _connectivitySub?.cancel();
     super.dispose();
   }
 
   void _showSnackBar({required String message}) {
+    if (!mounted) return;
+
     final messenger = ScaffoldMessenger.of(context);
     messenger
       ..hideCurrentSnackBar()
@@ -143,6 +154,8 @@ class _HomeScreenState extends State<HomeScreen>
           else
             BlocConsumer<CatFeedCubit, CatFeedState>(
               listener: (context, state) {
+                if (!mounted) return;
+
                 if (state.likes > _prevLikes) {
                   _heartCtrl.forward().then((_) => _heartCtrl.reset());
                 }
@@ -268,7 +281,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             const SizedBox(height: 24),
             const Text(
-              'Потеряно соединение с интернетом',
+              'Network connection lost',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -277,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             const SizedBox(height: 12),
             const Text(
-              'Пожалуйста, проверьте ваше интернет-соединение и нажмите «Retry».',
+              'Please, check your network-connection and tap «Retry».',
               style: TextStyle(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
             ),

@@ -18,7 +18,7 @@ void main() {
   late MockRemoveLike mockRemoveLike;
   late LikedCatsCubit cubit;
 
-  final _cat1 = Cat(
+  final cat1 = Cat(
     id: 'id1',
     imageUrl: 'https://example.com/cat1.png',
     width: 100,
@@ -27,7 +27,7 @@ void main() {
     breed: null,
   );
 
-  final _cat2 = Cat(
+  final cat2 = Cat(
     id: 'id2',
     imageUrl: 'https://example.com/cat2.png',
     width: 150,
@@ -36,15 +36,15 @@ void main() {
     breed: null,
   );
 
-  final _likedCat1 = LikedCat(cat: _cat1, likedAt: DateTime(2025, 6, 1));
-  final _likedCat2 = LikedCat(cat: _cat2, likedAt: DateTime(2025, 6, 2));
+  final likedCat1 = LikedCat(cat: cat1, likedAt: DateTime(2025, 6, 1));
+  final likedCat2 = LikedCat(cat: cat2, likedAt: DateTime(2025, 6, 2));
 
   setUp(() {
     mockWatchLikedCats = MockWatchLikedCats();
     mockRemoveLike = MockRemoveLike();
 
     when(mockWatchLikedCats.call()).thenAnswer(
-      (_) => Stream.value([_likedCat1, _likedCat2]),
+      (_) => Stream.value([likedCat1, likedCat2]),
     );
 
     cubit = LikedCatsCubit(
@@ -145,7 +145,7 @@ void main() {
         );
 
         when(mockWatchLikedCats.call()).thenAnswer(
-          (_) => Stream.value([_likedCat1, likedCatWithBreed]),
+          (_) => Stream.value([likedCat1, likedCatWithBreed]),
         );
 
         await cubit.close();
@@ -175,11 +175,11 @@ void main() {
         final loaded = cubit.state as LikedCatsLoaded;
         expect(loaded.allCats.length, 2);
 
-        when(mockRemoveLike.call(_cat1.id)).thenAnswer((_) async {});
+        when(mockRemoveLike.call(cat1.id)).thenAnswer((_) async {});
 
-        await cubit.delete(_cat1.id);
+        await cubit.delete(cat1.id);
 
-        verify(mockRemoveLike.call(_cat1.id)).called(1);
+        verify(mockRemoveLike.call(cat1.id)).called(1);
       },
     );
   });

@@ -22,7 +22,7 @@ void main() {
   late MockWatchLikedCats mockWatchLikedCats;
   late CatFeedCubit cubit;
 
-  final _fakeCat = Cat(
+  final fakeCat = Cat(
     id: 'fake_id_1',
     imageUrl: 'https://example.com/fake.png',
     width: 200,
@@ -31,8 +31,8 @@ void main() {
     breed: null,
   );
 
-  final _fakeLikedCat = LikedCat(
-    cat: _fakeCat,
+  final fakeLikedCat = LikedCat(
+    cat: fakeCat,
     likedAt: DateTime(2025, 6, 5, 12, 0, 0),
   );
 
@@ -78,7 +78,7 @@ void main() {
       final emitted = <CatFeedState>[];
       final sub = cubit.stream.listen(emitted.add);
 
-      controller.add([_fakeLikedCat, _fakeLikedCat]);
+      controller.add([fakeLikedCat, fakeLikedCat]);
       await Future.delayed(const Duration(milliseconds: 100));
 
       expect(emitted.last.likes, 2);
@@ -92,7 +92,7 @@ void main() {
     blocTest<CatFeedCubit, CatFeedState>(
       'успешно возвращается кот → [CatFeedLoading, CatFeedLoaded]',
       build: () {
-        when(mockGetRandomCat.call()).thenAnswer((_) async => _fakeCat);
+        when(mockGetRandomCat.call()).thenAnswer((_) async => fakeCat);
         return cubit;
       },
       act: (c) => c.loadNext(),
@@ -128,13 +128,13 @@ void main() {
 
   group('likeCurrent()', () {
     setUp(() {
-      when(mockGetRandomCat.call()).thenAnswer((_) async => _fakeCat);
+      when(mockGetRandomCat.call()).thenAnswer((_) async => fakeCat);
     });
 
     blocTest<CatFeedCubit, CatFeedState>(
       'если current != null и _busy == false, вызывается LikeCat и затем один loadNext',
       build: () {
-        when(mockGetRandomCat.call()).thenAnswer((_) async => _fakeCat);
+        when(mockGetRandomCat.call()).thenAnswer((_) async => fakeCat);
         return cubit;
       },
       act: (c) async {
@@ -142,9 +142,8 @@ void main() {
         clearInteractions(mockLikeCat);
         clearInteractions(mockGetRandomCat);
 
-        when(mockLikeCat.call(_fakeCat))
-            .thenAnswer((_) async => Future.value());
-        when(mockGetRandomCat.call()).thenAnswer((_) async => _fakeCat);
+        when(mockLikeCat.call(fakeCat)).thenAnswer((_) async => Future.value());
+        when(mockGetRandomCat.call()).thenAnswer((_) async => fakeCat);
 
         await c.likeCurrent();
       },
@@ -156,7 +155,7 @@ void main() {
         isA<CatFeedLoaded>(),
       ],
       verify: (_) {
-        verify(mockLikeCat.call(_fakeCat)).called(1);
+        verify(mockLikeCat.call(fakeCat)).called(1);
         verify(mockGetRandomCat.call()).called(1);
       },
     );
@@ -164,13 +163,13 @@ void main() {
 
   group('dislikeCurrent()', () {
     setUp(() {
-      when(mockGetRandomCat.call()).thenAnswer((_) async => _fakeCat);
+      when(mockGetRandomCat.call()).thenAnswer((_) async => fakeCat);
     });
 
     blocTest<CatFeedCubit, CatFeedState>(
       'если current != null и _busy == false, вызывается DislikeCat и затем один loadNext',
       build: () {
-        when(mockGetRandomCat.call()).thenAnswer((_) async => _fakeCat);
+        when(mockGetRandomCat.call()).thenAnswer((_) async => fakeCat);
         return cubit;
       },
       act: (c) async {
@@ -178,8 +177,10 @@ void main() {
         clearInteractions(mockDislikeCat);
         clearInteractions(mockGetRandomCat);
 
-        when(mockDislikeCat.call(_fakeCat)).thenAnswer((_) async {});
-        when(mockGetRandomCat.call()).thenAnswer((_) async => _fakeCat);
+        when(mockDislikeCat.call(fakeCat)).thenAnswer((_) async {
+          return;
+        });
+        when(mockGetRandomCat.call()).thenAnswer((_) async => fakeCat);
 
         await c.dislikeCurrent();
       },
@@ -191,7 +192,7 @@ void main() {
         isA<CatFeedLoaded>(),
       ],
       verify: (_) {
-        verify(mockDislikeCat.call(_fakeCat)).called(1);
+        verify(mockDislikeCat.call(fakeCat)).called(1);
         verify(mockGetRandomCat.call()).called(1);
       },
     );
