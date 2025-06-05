@@ -12,6 +12,7 @@ import '../domain/usecases/like_cat.dart';
 import '../domain/usecases/remove_like.dart';
 import '../domain/usecases/watch_liked_cats.dart';
 import '../presentation/cubits/cat_feed_cubit.dart';
+import '../presentation/cubits/connectivity_cubit.dart';
 import '../presentation/cubits/liked_cats_cubit.dart';
 
 final sl = GetIt.instance;
@@ -45,4 +46,5 @@ Future<void> initDi() async {
         watchLiked: sl(),
         removeLike: sl(),
       ));
+  sl.registerLazySingleton(() => ConnectivityCubit());
 }

@@ -1,4 +1,5 @@
 import 'package:catinder/presentation/cubits/cat_feed_cubit.dart';
+import 'package:catinder/presentation/cubits/connectivity_cubit.dart';
 import 'package:catinder/presentation/cubits/liked_cats_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +14,7 @@ void main() async {
 
   runApp(MultiBlocProvider(
     providers: [
+      BlocProvider(create: (_) => sl<ConnectivityCubit>()),
       BlocProvider(create: (_) => sl<CatFeedCubit>()..loadNext()),
       BlocProvider(create: (_) => sl<LikedCatsCubit>()),
     ],
